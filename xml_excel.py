@@ -49,7 +49,7 @@ arquivo2 = path2 +'/'+ arquivo2 + '.xlsx'
 aba_planilha = str(input('Digite o nome da Aba da planilha para inserir a informacao:'))
 
 # leitura do arquivo Excel
-exel = pd.read_excel(arquivo2, sheet_name= aba_planilha, header=5)
+exel = pd.read_excel(arquivo2, sheet_name= aba_planilha)
 
 # Leitura do arquivo xml e extração dos dados por meio das tags
 with open(arquivo, 'r') as f:
@@ -119,7 +119,7 @@ lista_elementos.append(desconto)
 lista_elementos[0] = lista_elementos[0][:10]
 
 # insere uma linha no arquivo e grava as indormações conforme o nome da coluna
-exel.iloc[-1] = {'MÊS': mes,
+elementos = {'MÊS': mes,
                  'DATA DE LAÇAMENTO': today,
                  'DATA EMISSÃO':lista_elementos[0], 
                  'RAZÃO SOCIAL': lista_elementos[1], 
@@ -131,7 +131,11 @@ exel.iloc[-1] = {'MÊS': mes,
                  'DESCONTO': lista_elementos[8], 
                  'VALOR FINAL': lista_elementos[4]}
 
+exel = exel.append(elementos, ignore_index=True)
 # Tratamento de Erro e saving das informações no arquivo
-with pd.ExcelWriter(arquivo2, mode='a', engine="openpyxl", if_sheet_exists='replace') as writer:
-    exel.to_excel(writer, sheet_name = aba_planilha)
-    print('Informações adicionadas com sucesso.')
+try:
+    with pd.ExcelWriter(arquivo2, mode='a', engine="openpyxl", if_sheet_exists='replace') as writer:
+        exel.to_excel(writer, sheet_name = aba_planilha, index=False)
+        print('Arquivos inseridos com sucesso!')
+except:
+    print('Arquivos não inseridos, contate o suporte!')
